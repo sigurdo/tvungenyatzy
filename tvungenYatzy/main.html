@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Tvungen yatzy</title>
+
+	<script type="text/javascript" src="js/generalFunctions.js"></script>
+
+	<style type="text/css">
+		/*html, body {
+			margin: 0px;
+			height: 100%;
+		}*/
+		table {
+			border-collapse: collapse;
+		}
+		th, td {
+			border: 1px solid black;
+			padding: 5px;
+			text-align: left;
+			font-weight: normal;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		<table id="pointsTable"></table>
+	</div>
+
+	<script type="text/javascript" src="js/Dice.js"></script>
+	<script type="text/javascript" src="js/categories.js"></script>
+
+	<script type="text/javascript">
+		"use strict";
+		class Yatzy {
+			constructor(playerNames, pointsTable) {
+				this.playerNames = playerNames;
+				this.categories = [
+					new SameNumber(1),
+					new SameNumber(2),
+					new SameNumber(3),
+					new SameNumber(4),
+					new SameNumber(5),
+					new SameNumber(6),
+					new Sum(),
+					new Bonus(),
+					new OnePair(),
+					new TwoPairs(),
+					new ThreeOfAKind(),
+					new FourOfAKind(),
+					new SmallStraight(),
+					new LargeStraight(),
+					new House(),
+					new Chance(),
+					new YatzyCat()
+				];
+				this.dice = new Dice(5);
+				this.pointsTable = pointsTable;
+				this.pointsArr = matrixOfZeros(this.categories.length, this.playerNames.length);
+			}
+
+			play() {
+				for (var i = 0; i < this.categories.length; i++) {
+					for (var j = 0; j < this.playerNames.length; j++) {
+						let category = this.categories[i];
+						let points;
+						if(category.catName == "Sum" || category.catName == "Bonus") {
+							points = category.calcPoints(this.pointsArr, j);
+						}
+						else {
+							category.play(this.dice);
+							points = category.calcPoints(this.dice);
+						}
+						this.pointsArr[i][j] = points;
+
+						this.updateTable();
+					}
+				}
+			}
+
+			updateTable() {
+				let table = this.pointsTable;
+
+				let tableHTML = "<tr> <td></td>";
+				for (var i = 0; i < this.playerNames.length; i++) {
+					tableHTML += "<th>"+this.playerNames[i]+"</th>";
+				}
+				tableHTML += "</tr>";
+
+				for (var i = 0; i < this.categories.length; i++) {
+					console.log();
+					tableHTML += "<tr> <th>"+this.categories[i].catName+"</th>";
+					for (var j = 0; j < this.playerNames.length; j++) {
+						tableHTML += "<td>"+this.pointsArr[i][j]+"</td>";
+					}
+					tableHTML += "</tr>";
+				}
+
+				tableHTML += "<tr> <th>Totalsum</th>";
+				for (var i = 0; i < this.playerNames.length; i++) {
+					tableHTML += "<td>"+sumMatrix(this.pointsArr, i, 6, this.pointsArr.length-1)+"</td>";
+				}
+				tableHTML += "</tr>";
+
+				table.innerHTML = tableHTML;
+			}
+		}
+
+		let pointsTable = document.querySelector("#pointsTable");
+		let playersStr = "Arne,Bjarne,Petter,Adolf";
+		playersStr = window.prompt("Skriv inn navn på spillere adskilt med komma:");
+		let players = playersStr.split(",");
+
+		let yatzy = new Yatzy(players, pointsTable);
+		yatzy.play();
+	</script>
+
+	<script type="text/javascript" src="js/probabilityCalculations.js"></script>
+</body>
+</html>
