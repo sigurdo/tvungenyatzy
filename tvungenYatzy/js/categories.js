@@ -134,6 +134,7 @@ class OnePair extends Category {
 
 		{//Første kast:
 			dice.throw();
+			dice.unkeepAll();
 			let arr = dice.getArr();
 
 			if (arrQtyOf(arr, 6) >= 2) {return;}
@@ -153,6 +154,7 @@ class OnePair extends Category {
 
 		{//Andre kast:
 			dice.throw();
+			dice.unkeepAll();
 			let arr = dice.getArr();
 
 			if (arrQtyOf(arr, 6) >= 2) {return;}
@@ -205,6 +207,7 @@ class TwoPairs extends Category {
 
 		{//Første kast:
 			dice.throw();
+			dice.unkeepAll();
 			let arr = dice.getArr();
 			let pairs = 0;
 
@@ -230,6 +233,7 @@ class TwoPairs extends Category {
 
 		{//Andre kast:
 			dice.throw();
+			dice.unkeepAll();
 			let arr = dice.getArr();
 			let pairs = 0;
 
@@ -655,6 +659,7 @@ class YatzyCat extends Category {
 
 		for (var n = 0; n < 3; n++) {
 			dice.throw();
+			dice.unkeepAll();
 			let arr = dice.getArr();
 			let numToKeep = mode(arr);
 

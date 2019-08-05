@@ -20,11 +20,19 @@
 			text-align: left;
 			font-weight: normal;
 		}
+		.die {
+			width: 25px;
+		}
+		.kept {
+			background-color: #d0d0d0;
+		}
 	</style>
 </head>
 <body>
 	<div>
 		<table id="pointsTable"></table>
+
+		<div id="history"></div>
 	</div>
 
 	<script type="text/javascript" src="js/Dice.js"></script>
@@ -33,7 +41,7 @@
 	<script type="text/javascript">
 		"use strict";
 		class Yatzy {
-			constructor(playerNames, pointsTable) {
+			constructor(playerNames, pointsTable, historyEl) {
 				this.playerNames = playerNames;
 				this.categories = [
 					new SameNumber(1),
@@ -57,6 +65,8 @@
 				this.dice = new Dice(5);
 				this.pointsTable = pointsTable;
 				this.pointsArr = matrixOfZeros(this.categories.length, this.playerNames.length);
+				this.historyEl = historyEl;
+				this.historyArr = matrixOfZeros(this.categories.length, this.playerNames.length);
 			}
 
 			play() {
@@ -68,14 +78,16 @@
 							points = category.calcPoints(this.pointsArr, j);
 						}
 						else {
-							category.play(this.dice);
+							let hist = category.play(this.dice);
 							points = category.calcPoints(this.dice);
+							this.historyArr[i][j] = this.dice.getArr();
 						}
 						this.pointsArr[i][j] = points;
-
-						this.updateTable();
 					}
 				}
+				this.dice.resetThrows();
+				this.updateTable();
+				this.updateHistory();
 			}
 
 			updateTable() {
@@ -88,7 +100,6 @@
 				tableHTML += "</tr>";
 
 				for (var i = 0; i < this.categories.length; i++) {
-					console.log();
 					tableHTML += "<tr> <th>"+this.categories[i].catName+"</th>";
 					for (var j = 0; j < this.playerNames.length; j++) {
 						tableHTML += "<td>"+this.pointsArr[i][j]+"</td>";
@@ -104,14 +115,47 @@
 
 				table.innerHTML = tableHTML;
 			}
+
+			updateHistory() {
+				let html = "<h2> Alle terningkast: </h2>";
+
+				for (var i = 0; i < this.categories.length; i++) {
+					let cat = this.categories[i];
+					if(cat.catName != "Sum" && cat.catName != "Bonus") {
+						html += "<h3>"+cat.catName+"</h3><table>";
+						
+						for (var j = 0; j < this.playerNames.length; j++) {
+								let pName = this.playerNames[j];
+								html += "<tr><td>"+pName+"</td><td>";
+								let histIndex = i < 6 ? 1 + this.playerNames.length*i + j : 1 + this.playerNames.length*i + j - this.playerNames.length*2;
+								for (let k = 0; k < this.dice.histArr[histIndex].length; k++) {
+									let arr = this.dice.histArr[histIndex][k].dice;
+									let keepArr = this.dice.histArr[histIndex][k].keep;
+									html += "<div>";
+									for (var l = 0; l < arr.length; l++) {
+										html += "<img src='media/d"+arr[l]+".png' class='die "+(keepArr[l] ? "kept" : "new")+"'>";
+									}
+									html += "</div>";
+								}
+
+								html += "</td><td style='font-size: 24px; text-align: center;'>"+this.pointsArr[i][j]+"</td></tr>";
+						}
+
+						html += "</table>";
+					}
+				}
+
+				this.historyEl.innerHTML = html;
+			}
 		}
 
 		let pointsTable = document.querySelector("#pointsTable");
+		let historyEl = document.querySelector("#history");
 		let playersStr = "Arne,Bjarne,Petter,Adolf";
 		playersStr = window.prompt("Skriv inn navn på spillere adskilt med komma:");
 		let players = playersStr.split(",");
 
-		let yatzy = new Yatzy(players, pointsTable);
+		let yatzy = new Yatzy(players, pointsTable, historyEl);
 		yatzy.play();
 	</script>
 

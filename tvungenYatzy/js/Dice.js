@@ -4,6 +4,8 @@ class SuperDice {
 		this.keepArr = [];
 		this.keepArr.length = diceArr.length;
 		this.keepArr.fill(false);
+		this.histArr = [];
+		this.tempHistArr = [];
 		this.qtyThrows = 0;
 	}
 
@@ -22,6 +24,7 @@ class SuperDice {
 				this.diceArr[i] = randInt(1, 6);
 			}
 		}
+		this.tempHistArr.push({dice: JSON.parse(JSON.stringify(this.diceArr)), keep: JSON.parse(JSON.stringify(this.keepArr))});
 	}
 
 	keep(index) {
@@ -47,6 +50,8 @@ class SuperDice {
 
 	resetThrows() {
 		this.qtyThrows = 0;
+		this.histArr.push(JSON.parse(JSON.stringify(this.tempHistArr)));
+		this.tempHistArr = [];
 	}
 
 	getArr() {
