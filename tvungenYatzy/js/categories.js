@@ -265,7 +265,6 @@ class TwoPairs extends Category {
 	}
 
 	calcPoints(dice) {
-		dice.setArr([4,5,4,3,2]);
 		let arr = dice.getArr();
 		let pts = 0;
 		for (var num = 1; num <= 5; num++) {
