@@ -265,6 +265,7 @@ class TwoPairs extends Category {
 	}
 
 	calcPoints(dice) {
+		dice.setArr([4,5,4,3,2]);
 		let arr = dice.getArr();
 		let pts = 0;
 		for (var num = 1; num <= 5; num++) {
@@ -570,10 +571,11 @@ class House extends Category {
 			}
 
 			if (numsKept < 4) {
-				for (let n = 6; n >= 6; n--) {
+				for (let n = 6; n >= 5; n--) {
 					if (arrQtyOf(arr, n) == 1) {
 						dice.keepNum(n, 1);
 						numsKept += 1;
+						break;
 					}
 				}
 			}
@@ -598,10 +600,11 @@ class House extends Category {
 			}
 
 			if (numsKept < 4) {
-				for (let n = 6; n >= 6; n--) {
+				for (let n = 6; n >= 4; n--) {
 					if (arrQtyOf(arr, n) == 1) {
 						dice.keepNum(n, 1);
 						numsKept += 1;
+						break;
 					}
 				}
 			}

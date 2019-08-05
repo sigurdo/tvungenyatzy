@@ -24,6 +24,10 @@ class SuperDice {
 				this.diceArr[i] = randInt(1, 6);
 			}
 		}
+		this.saveDiceInHist();
+	}
+
+	saveDiceInHist() {
 		this.tempHistArr.push({dice: JSON.parse(JSON.stringify(this.diceArr)), keep: JSON.parse(JSON.stringify(this.keepArr))});
 	}
 
@@ -35,7 +39,13 @@ class SuperDice {
 		let qtyKept = 0;
 		for (var i = 0; i < this.diceArr.length; i++) {
 			if (this.diceArr[i] == num) {
-				this.keepArr[i] = qtyKept < qtyMax;
+				if (qtyKept < qtyMax) {
+					this.keepArr[i] = true;
+					qtyKept += qtyKept < qtyMax
+				}
+				else {
+					this.keepArr[i] = false;
+				}
 			}
 		}
 	}

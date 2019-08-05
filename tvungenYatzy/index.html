@@ -67,9 +67,12 @@
 				this.pointsArr = matrixOfZeros(this.categories.length, this.playerNames.length);
 				this.historyEl = historyEl;
 				this.historyArr = matrixOfZeros(this.categories.length, this.playerNames.length);
+				this.maxScore = 0;
 			}
 
 			play() {
+				this.maxScore = 0;
+
 				for (var i = 0; i < this.categories.length; i++) {
 					for (var j = 0; j < this.playerNames.length; j++) {
 						let category = this.categories[i];
@@ -88,6 +91,8 @@
 				this.dice.resetThrows();
 				this.updateTable();
 				this.updateHistory();
+
+				return this.maxScore;
 			}
 
 			updateTable() {
@@ -109,7 +114,11 @@
 
 				tableHTML += "<tr> <th>Totalsum</th>";
 				for (var i = 0; i < this.playerNames.length; i++) {
-					tableHTML += "<td>"+sumMatrix(this.pointsArr, i, 6, this.pointsArr.length-1)+"</td>";
+					let totSum = sumMatrix(this.pointsArr, i, 6, this.pointsArr.length-1);
+					tableHTML += "<td>"+totSum+"</td>";
+					if (totSum > this.maxScore) {
+						this.maxScore = totSum; 
+					}
 				}
 				tableHTML += "</tr>";
 
@@ -151,12 +160,24 @@
 
 		let pointsTable = document.querySelector("#pointsTable");
 		let historyEl = document.querySelector("#history");
-		let playersStr = "Arne,Bjarne,Petter,Adolf";
-		playersStr = window.prompt("Skriv inn navn på spillere adskilt med komma:");
+		let playersStr = "Arne,Bjarne,Knut,Arve,Jens,Toreif,Ørnulf,Konrad";
+		let input = window.prompt("Skriv inn navn på spillere adskilt med komma:");
+		if (input) {
+			playersStr = input;
+		}
 		let players = playersStr.split(",");
 
 		let yatzy = new Yatzy(players, pointsTable, historyEl);
-		yatzy.play();
+		let maxScore = yatzy.play();
+		
+		/*let attempts = 1;
+		while (maxScore < 250) {
+			yatzy = new Yatzy(players, pointsTable, historyEl);
+			maxScore = yatzy.play();
+			attempts++;
+			console.log(attempts, maxScore);
+		} 
+		console.log(attempts+" attempts");*/
 	</script>
 
 	<script type="text/javascript" src="js/probabilityCalculations.js"></script>
