@@ -554,21 +554,27 @@ class House extends Category {
 		{//Første kast:
 			dice.throw();
 			let arr = dice.getArr();
+			let numsKept = 0;
 			for (let n = 6; n >= 1; n--) {
 				if (arrQtyOf(arr, n) >= 3) {
 					dice.keepNum(n, 3);
+					numsKept += 3;
 				}
 			}
 			
 			for (let n = 6; n >= 1; n--) {
 				if (arrQtyOf(arr, n) == 2) {
 					dice.keepNum(n, 2);
+					numsKept += 2;
 				}
 			}
 
-			for (let n = 6; n >= 6; n--) {
-				if (arrQtyOf(arr, n) == 1) {
-					dice.keepNum(n, 1);
+			if (numsKept < 4) {
+				for (let n = 6; n >= 6; n--) {
+					if (arrQtyOf(arr, n) == 1) {
+						dice.keepNum(n, 1);
+						numsKept += 1;
+					}
 				}
 			}
 		}
@@ -576,15 +582,27 @@ class House extends Category {
 		{//Andre kast:
 			dice.throw();
 			let arr = dice.getArr();
+			let numsKept = 0;
 			for (let n = 6; n >= 1; n--) {
 				if (arrQtyOf(arr, n) >= 3) {
 					dice.keepNum(n, 3);
+					numsKept += 3;
 				}
 			}
 			
 			for (let n = 6; n >= 1; n--) {
 				if (arrQtyOf(arr, n) == 2) {
 					dice.keepNum(n, 2);
+					numsKept += 2;
+				}
+			}
+
+			if (numsKept < 4) {
+				for (let n = 6; n >= 6; n--) {
+					if (arrQtyOf(arr, n) == 1) {
+						dice.keepNum(n, 1);
+						numsKept += 1;
+					}
 				}
 			}
 		}

@@ -1,6 +1,6 @@
 function operation() {
 	let dice = new Dice(5);
-	let cat = new FourOfAKind();
+	let cat = new House();
 	
 	cat.play(dice);
 	return cat.calcPoints(dice);
@@ -22,7 +22,7 @@ function probabilityCalculations() {
 	console.log("nytt skop, nytt variabelnavn-rot");
 
 	let sum = 0;
-	let attempts = 10**6
+	let attempts = 10**5.5
 
 	for (var i = 0; i < attempts; i++) {
 		if (i % (10**5) == 0) {
