@@ -30,11 +30,13 @@
 		}
 		.die {
 			width: 25px;
+			border-radius: 3.3px;
 		}
 		.kept {
 			background-color: #d0d0d0;
 		}
 	</style>
+	<link rel="stylesheet" type="text/css" href="css/darkmode.css">
 </head>
 <body>
 	<div>
@@ -150,7 +152,7 @@
 									let keepArr = this.dice.histArr[histIndex][k].keep;
 									html += "<div>";
 									for (var l = 0; l < arr.length; l++) {
-										html += "<img src='media/d"+arr[l]+".png' class='die "+(keepArr[l] ? "kept" : "new")+"'>";
+										html += "<img src='media/d"+arr[l]+(darkmode ? "_dark" : "")+".svg' class='die "+(keepArr[l] ? "kept" : "new")+"'>";
 									}
 									html += "</div>";
 								}
@@ -174,6 +176,12 @@
 			playersStr = input;
 		}
 		let players = playersStr.split(",");
+
+		let darkmode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+			darkmode = event.matches;
+			yatzy.updateHistory();
+		});
 
 		let yatzy = new Yatzy(players, pointsTable, historyEl);
 		let maxScore = yatzy.play();

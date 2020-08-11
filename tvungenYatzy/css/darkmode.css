@@ -1,0 +1,14 @@
+@media (prefers-color-scheme: dark) {
+	* {
+		background-color: black;
+		color: white;
+	}
+
+	table, th, td {
+		border-color: white;
+	}
+
+	.kept {
+		background-color: #505050;
+	}
+}
