@@ -5,7 +5,7 @@
 	<meta name="theme-color" content="#ffffff">
 	<link rel="manifest" href="manifest.json">
 	<script type="text/javascript">
-		console.log("Ny greie 8");
+		console.log("Ny greie 9");
 		if('serviceWorker' in navigator) {
 			document.write("Installerer serviceWorker");
 			console.log('Registering SW...');
@@ -193,13 +193,13 @@
 		document.write("Ting 3");
 		let darkmode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 		document.write("Ting 4");
-		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+		/*window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
 			document.write("Ting 5");
 			darkmode = event.matches;
 			document.write("Ting 6");
 			yatzy.updateHistory();
 			document.write("Ting 7");
-		});
+		});*/
 
 		document.write("Ting 8");
 		let yatzy = new Yatzy(players, pointsTable, historyEl);
