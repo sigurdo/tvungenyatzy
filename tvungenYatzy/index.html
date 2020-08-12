@@ -6,8 +6,12 @@
 	<link rel="manifest" href="manifest.json">
 	<script type="text/javascript">
 		if('serviceWorker' in navigator) {
+			document.write("Installerer serviceWorker");
 			console.log('Registering SW...');
 			navigator.serviceWorker.register('sw.js');
+		}
+		else {
+			document.write("Kunne ikke installere serviceWorker");
 		}
 	</script>
 	<title>Tvungen yatzy</title>
@@ -172,6 +176,7 @@
 		let historyEl = document.querySelector("#history");
 		let playersStr = "Arne,Bjarne,Knut,Arve,Jens,Toreif,Ørnulf,Konrad";
 		let input = window.prompt("Skriv inn navn på spillere adskilt med komma:");
+		document.write("JS kjører");
 		if (input) {
 			playersStr = input;
 		}
