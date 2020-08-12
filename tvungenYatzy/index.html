@@ -5,7 +5,7 @@
 	<meta name="theme-color" content="#ffffff">
 	<link rel="manifest" href="manifest.json">
 	<script type="text/javascript">
-		console.log("Ny greie");
+		console.log("Ny greie 2");
 		if('serviceWorker' in navigator) {
 			document.write("Installerer serviceWorker");
 			console.log('Registering SW...');
@@ -57,6 +57,7 @@
 		"use strict";
 		class Yatzy {
 			constructor(playerNames, pointsTable, historyEl) {
+				document.write("constructor");
 				this.playerNames = playerNames;
 				this.categories = [
 					new SameNumber(1),
@@ -86,6 +87,7 @@
 			}
 
 			play() {
+				document.write("play");
 				this.maxScore = 0;
 
 				for (var i = 0; i < this.categories.length; i++) {
@@ -111,6 +113,7 @@
 			}
 
 			updateTable() {
+				document.write("updateTable");
 				let table = this.pointsTable;
 
 				let tableHTML = "<tr> <td></td>";
@@ -141,6 +144,7 @@
 			}
 
 			updateHistory() {
+				document.write("updateHistory");
 				let html = "<h2> Alle terningkast: </h2>";
 
 				for (var i = 0; i < this.categories.length; i++) {
@@ -169,6 +173,7 @@
 					}
 				}
 
+				document.write("Setter this.historyEl.innerHTML");
 				this.historyEl.innerHTML = html;
 			}
 		}
@@ -190,7 +195,9 @@
 		});
 
 		let yatzy = new Yatzy(players, pointsTable, historyEl);
+		document.write("Har lagd yatzy objekt");
 		let maxScore = yatzy.play();
+		document.write("Har kjørt yatzy.play()");
 		
 		/*let attempts = 1;
 		while (maxScore < 250) {
