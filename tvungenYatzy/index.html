@@ -14,35 +14,23 @@
 
 	<script type="text/javascript" src="js/generalFunctions.js"></script>
 
-	<style type="text/css">
-		/*html, body {
-			margin: 0px;
-			height: 100%;
-		}*/
-		table {
-			border-collapse: collapse;
-		}
-		th, td {
-			border: 1px solid black;
-			padding: 5px;
-			text-align: left;
-			font-weight: normal;
-		}
-		.die {
-			width: 25px;
-			border-radius: 3.3px;
-		}
-		.kept {
-			background-color: #d0d0d0;
-		}
-	</style>
-	<link rel="stylesheet" type="text/css" href="css/darkmode.css">
+	<link rel="stylesheet" type="text/css" href="css/yatzy.css">
 </head>
 <body>
 	<div>
-		<table id="pointsTable"></table>
+		<h1>Lettvindt tvungen YATZY</h1>
 
-		<div id="history"> This app requires JavaScript to run </div>
+		<p>
+			<span id="requires-js-message">Appen trenger JavaScript for å funke.</span>
+		</p>
+
+		<table id="pointsTable"></table>
+		
+		<p>
+			<button id="playButton">Spill</button>
+		</p>
+
+		<div id="history"> </div>
 	</div>
 
 	<script type="text/javascript" src="js/Dice.js"></script>
@@ -50,9 +38,16 @@
 
 	<script type="text/javascript">
 		"use strict";
+
+		async function render() {
+			// Yes, this is quite janky, but JS appears to force re-rendering the page on a 0ms delay.
+			await new Promise(r => setTimeout(r, 0));
+		}
+
 		class Yatzy {
-			constructor(playerNames, pointsTable, historyEl) {
-				this.playerNames = playerNames;
+			constructor(pointsTable, historyEl, showTotalSum) {
+				this.playerNames = ["", "", "", "", "", "", "", "", ""];
+				this.numOfColumns = 9;
 				this.categories = [
 					new SameNumber(1),
 					new SameNumber(2),
@@ -78,9 +73,23 @@
 				this.historyEl = historyEl;
 				this.historyArr = matrixOfZeros(this.categories.length, this.playerNames.length);
 				this.maxScore = 0;
+				this.showTotalSum = showTotalSum;
+			}
+
+			readPlayerNames() {
+				this.playerNames = [];
+
+				let playerNameEls = document.querySelectorAll("input.player-name");
+
+				for (let i = 0; i < playerNameEls.length; i++) {
+					let name = playerNameEls[i].value;
+					this.playerNames.push(name);
+				}
 			}
 
 			play() {
+				this.readPlayerNames();
+
 				this.maxScore = 0;
 
 				for (var i = 0; i < this.categories.length; i++) {
@@ -98,9 +107,8 @@
 						this.pointsArr[i][j] = points;
 					}
 				}
+
 				this.dice.resetThrows();
-				this.updateTable();
-				this.updateHistory();
 
 				return this.maxScore;
 			}
@@ -109,26 +117,41 @@
 				let table = this.pointsTable;
 
 				let tableHTML = "<tr> <td></td>";
-				for (var i = 0; i < this.playerNames.length; i++) {
-					tableHTML += "<th>"+this.playerNames[i]+"</th>";
+				for (var i = 0; i < this.numOfColumns; i++) {
+					let playerName = i < this.playerNames.length ? this.playerNames[i] : "";
+					tableHTML += '<th class="player-name"><input class="player-name" data-number="'+i+'" value="'+playerName+'"</th>';
 				}
 				tableHTML += "</tr>";
 
 				for (var i = 0; i < this.categories.length; i++) {
 					tableHTML += "<tr> <th>"+this.categories[i].catName+"</th>";
 					for (var j = 0; j < this.playerNames.length; j++) {
-						tableHTML += "<td>"+this.pointsArr[i][j]+"</td>";
+						let content = "";
+						if (this.playerNames[j] != "") {
+							let points = this.pointsArr[i][j];
+							if (points == 0) {
+								content = "–";
+							}
+							else {
+								content = points;
+							}
+						}
+						tableHTML += '<td class="points">'+content+'</td>';
 					}
 					tableHTML += "</tr>";
 				}
 
 				tableHTML += "<tr> <th>Totalsum</th>";
 				for (var i = 0; i < this.playerNames.length; i++) {
-					let totSum = sumMatrix(this.pointsArr, i, 6, this.pointsArr.length-1);
-					tableHTML += "<td>"+totSum+"</td>";
-					if (totSum > this.maxScore) {
-						this.maxScore = totSum; 
+					let content = "";
+					if (this.showTotalSum && this.playerNames[i] != "") {
+						let totSum = sumMatrix(this.pointsArr, i, 6, this.pointsArr.length-1);
+						content = totSum;
+						if (totSum > this.maxScore) {
+							this.maxScore = totSum;
+						}
 					}
+					tableHTML += '<td class="total-sum"><input class="total-sum" data-number="'+i+'" value="'+content+'"</th>';
 				}
 				tableHTML += "</tr>";
 
@@ -144,20 +167,23 @@
 						html += "<h3>"+cat.catName+"</h3><table>";
 						
 						for (var j = 0; j < this.playerNames.length; j++) {
-								let pName = this.playerNames[j];
-								html += "<tr><td>"+pName+"</td><td>";
-								let histIndex = i < 6 ? 1 + this.playerNames.length*i + j : 1 + this.playerNames.length*i + j - this.playerNames.length*2;
-								for (let k = 0; k < this.dice.histArr[histIndex].length; k++) {
-									let arr = this.dice.histArr[histIndex][k].dice;
-									let keepArr = this.dice.histArr[histIndex][k].keep;
-									html += "<div>";
-									for (var l = 0; l < arr.length; l++) {
-										html += "<img src='media/d"+arr[l]+(darkmode ? "_dark" : "")+".svg' class='die "+(keepArr[l] ? "kept" : "new")+"'>";
-									}
-									html += "</div>";
+							if (this.playerNames[j] == "") {
+								continue
+							}
+							let pName = this.playerNames[j];
+							html += "<tr><td>"+pName+"</td><td>";
+							let histIndex = i < 6 ? 1 + this.playerNames.length*i + j : 1 + this.playerNames.length*i + j - this.playerNames.length*2;
+							for (let k = 0; k < this.dice.histArr[histIndex].length; k++) {
+								let arr = this.dice.histArr[histIndex][k].dice;
+								let keepArr = this.dice.histArr[histIndex][k].keep;
+								html += "<div>";
+								for (var l = 0; l < arr.length; l++) {
+									html += "<img src='media/d"+arr[l]+".svg' class='die "+(keepArr[l] ? "kept" : "new")+"'>";
 								}
+								html += "</div>";
+							}
 
-								html += "</td><td style='font-size: 24px; text-align: center;'>"+this.pointsArr[i][j]+"</td></tr>";
+							html += "</td><td style='font-size: 24px; text-align: center;'>"+this.pointsArr[i][j]+"</td></tr>";
 						}
 
 						html += "</table>";
@@ -169,32 +195,22 @@
 		}
 
 		let pointsTable = document.querySelector("#pointsTable");
+		let playButton = document.querySelector("#playButton");
 		let historyEl = document.querySelector("#history");
-		let playersStr = "Arne,Bjarne,Knut,Arve,Jens,Toreif,Ørnulf,Konrad";
-		let input = window.prompt("Skriv inn navn på spillere adskilt med komma:");
-		if (input) {
-			playersStr = input;
-		}
-		let players = playersStr.split(",");
+		let requiresJsMessageEl = document.querySelector("#requires-js-message");
 
-		let darkmode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-		/* This code seems to break safari compability so it has to go * /
-		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-			darkmode = event.matches;
-			yatzy.updateHistory();
-		});/**/
+		requiresJsMessageEl.style.display = "none";
 
-		let yatzy = new Yatzy(players, pointsTable, historyEl);
-		let maxScore = yatzy.play();
+		let yatzy = new Yatzy(pointsTable, historyEl, false);
+		yatzy.updateTable();
 		
-		/*let attempts = 1;
-		while (maxScore < 250) {
-			yatzy = new Yatzy(players, pointsTable, historyEl);
-			maxScore = yatzy.play();
-			attempts++;
-			console.log(attempts, maxScore);
-		} 
-		console.log(attempts+" attempts");*/
+		playButton.addEventListener("click", async event => {
+			yatzy = new Yatzy(pointsTable, historyEl, false);
+			yatzy.play();
+			yatzy.updateTable();
+			await render();
+			yatzy.updateHistory();
+		})
 	</script>
 
 	<script type="text/javascript" src="js/probabilityCalculations.js"></script>
