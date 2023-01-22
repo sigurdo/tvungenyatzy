@@ -120,7 +120,7 @@
 				let tableHTML = "<tr> <td></td>";
 				for (var i = 0; i < this.numOfColumns; i++) {
 					let playerName = i < this.playerNames.length ? this.playerNames[i] : "";
-					tableHTML += '<th class="player-name"><input class="player-name" data-number="'+i+'" value="'+playerName+'"</th>';
+					tableHTML += '<th class="player-name"><input type="text" class="player-name" data-number="'+i+'" value="'+playerName+'"</th>';
 				}
 				tableHTML += "</tr>";
 
@@ -152,7 +152,7 @@
 							this.maxScore = totSum;
 						}
 					}
-					tableHTML += '<td class="total-sum"><input class="total-sum" data-number="'+i+'" value="'+content+'"</th>';
+					tableHTML += '<td class="total-sum"><input type="text" inputmode="numeric" pattern="[0-9]*" class="total-sum" data-number="'+i+'" value="'+content+'"</th>';
 				}
 				tableHTML += "</tr>";
 
@@ -216,6 +216,7 @@
 			yatzy = new Yatzy(pointsTable, historyEl, false);
 			yatzy.play();
 			yatzy.updateTable();
+			historyEl.innerHTML = "";
 			await render();
 			yatzy.updateHistory();
 		});
