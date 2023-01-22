@@ -27,6 +27,7 @@
 		<table id="pointsTable"></table>
 		
 		<p>
+			<button id="clearButton">Tøm brett</button>
 			<button id="playButton">Spill</button>
 		</p>
 
@@ -195,6 +196,7 @@
 		}
 
 		let pointsTable = document.querySelector("#pointsTable");
+		let clearButton = document.querySelector("#clearButton");
 		let playButton = document.querySelector("#playButton");
 		let historyEl = document.querySelector("#history");
 		let requiresJsMessageEl = document.querySelector("#requires-js-message");
@@ -203,6 +205,12 @@
 
 		let yatzy = new Yatzy(pointsTable, historyEl, false);
 		yatzy.updateTable();
+
+		clearButton.addEventListener("click", async event => {
+			yatzy = new Yatzy(pointsTable, historyEl, false);
+			yatzy.updateTable();
+			historyEl.innerHTML = "";
+		});
 		
 		playButton.addEventListener("click", async event => {
 			yatzy = new Yatzy(pointsTable, historyEl, false);
@@ -210,7 +218,7 @@
 			yatzy.updateTable();
 			await render();
 			yatzy.updateHistory();
-		})
+		});
 	</script>
 
 	<script type="text/javascript" src="js/probabilityCalculations.js"></script>
