@@ -1,0 +1,57 @@
+name: Build and deploy Tvungenyatzy
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  PRODUCTION: 1
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [19.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install NPM packages
+      run: |
+        npm install
+
+    - name: Build website
+      run: |
+        npm run build
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v1.0.8
+      with:
+        name: "tvungenyatzy"
+        path: "dist/"
+        retention-days: "1000"
+  
+  deploy:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+        with:
+          artifact_name: "tvungenyatzy"
