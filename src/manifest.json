@@ -11,9 +11,6 @@
 			"src": "media/icon.png",
 			"type": "image/png",
 			"sizes": "557x557"
-		}, {
-			"src": "media/icon.ico",
-			"sizes": "any"
 		}
 	]
 }
